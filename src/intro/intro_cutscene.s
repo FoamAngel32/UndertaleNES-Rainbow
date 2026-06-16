@@ -379,6 +379,8 @@ intro_cutscene:
   lda #04
   jsr PPU::fadePaletteWait
 
+  ldx #255
+  jsr system::delayNMI
 
   lda #00
   jsr PPU::fadePaletteWait
@@ -403,6 +405,8 @@ intro_cutscene:
   lda #04
   jsr PPU::fadePaletteWait
 
+  ldx #255
+  jsr system::delayNMI
 
   lda #00
   jsr PPU::fadePaletteWait
@@ -428,6 +432,8 @@ intro_cutscene:
   lda #04
   jsr PPU::fadePaletteWait
 
+  ldx #255
+  jsr system::delayNMI
 
   lda #00
   jsr PPU::fadePaletteWait
@@ -474,18 +480,34 @@ intro_cutscene:
   jsr PPU::waitNMI
   lda #04
   jsr PPU::fadePaletteWait
-
+  lda #2
+:
+  pha 
+  ldx #255
+  jsr system::delayNMI
+  pla 
+  sec 
+  sbc #$01
+  bne :-
   lda #intro_9_y_bottom
 @move_up_camera:
   pha 
-  ldx #$03
+  ldx #4
   jsr system::delayNMI
   pla 
   sec  
   sbc #1
   sta MAP_WINDOW_Y_SCROLL
   bne @move_up_camera
-
+  lda #3
+:
+  pha 
+  ldx #255
+  jsr system::delayNMI
+  pla 
+  sec 
+  sbc #$01
+  bne :-
   lda #00
   jsr PPU::fadePaletteWait
   lda #(CHR_MODE_2 | %00000000)       ; disble window
@@ -497,5 +519,6 @@ intro_cutscene:
   lda #1
   sta MAP_PRG_A_LO
   sta current_prg_bankA
+  jsr PPU::waitNMI
   rts 
 

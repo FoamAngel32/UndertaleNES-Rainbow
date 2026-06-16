@@ -51,13 +51,13 @@
 .byte ((NES_MAPPER&$F0)|%00001000) ; upper nybble of mapper number + iNES 2.0
 .byte ((NES_MAPPER&$F00)>>8)
 .byte ((>NES_CHR_BANKS)<<4)|>NES_PRG_BANKS
-.byte 9 ; PRG-RAM shift counter - (64 << shift counter)
+.byte $EE ; PRG-RAM shift counter - (64 << shift counter)
 .if CHR_CHIPS <> RNBW_CHR_ROM
   .byte 9 ; CHR-RAM shift counter - (64 << shift counter)
 .else
   .byte 0
 .endif
-.byte $00, $00, $00, $00 ; padding
+.byte $00, $00, $00, $01 ; padding
 
 /*
                                                                                                   
@@ -243,8 +243,10 @@ config_game:
   sta RNBW::RX_ADD
   lda #>RNBW::BUF_OUT
   sta RNBW::TX_ADD
-  lda #0
+  lda #%10000000
   sta MAP_PRG_6_HI
+  lda #0
+  sta MAP_PRG_6_LO
   sta MAP_PRG_7_HI
   sta MAP_PRG_8_HI
   sta MAP_PRG_9_HI
@@ -981,7 +983,7 @@ init_state_title:
   lda #<title_line0
   sta ptr2
   ldx #1
-  lda #5
+  lda #2
   jmp undertale_write
 update_state_title:
   lda keyHeld
