@@ -1,0 +1,5 @@
+.define STR_BUILD "UNDERTALE_NES_PORT"
+BUILD = 0
+
+.define STR_VERSION "0.0.1"
+;VERSION = 0.0.1
