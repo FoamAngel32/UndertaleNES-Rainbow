@@ -442,7 +442,7 @@ skipNtsc:
   jsr system::prng
 
 end_nmi:
-  ldx 6
+  ldx #6
 :
   dex 
   cpx #$00 
