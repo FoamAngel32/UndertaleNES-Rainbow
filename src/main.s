@@ -51,7 +51,7 @@
 .byte ((NES_MAPPER&$F0)|%00001000) ; upper nybble of mapper number + iNES 2.0
 .byte ((NES_MAPPER&$F00)>>8)
 .byte ((>NES_CHR_BANKS)<<4)|>NES_PRG_BANKS
-.byte $EE ; PRG-RAM shift counter - (64 << shift counter)
+.byte $E0 ; PRG-RAM shift counter - (64 << shift counter)
 .if CHR_CHIPS <> RNBW_CHR_ROM
   .byte 9 ; CHR-RAM shift counter - (64 << shift counter)
 .else
@@ -425,10 +425,6 @@ skipClassicNMI:
   lda #$00
   sta PPU::FRAME_CNT2
 skipNtsc:
-
-  ldy #0
-  jsr pad::read
-  sta keyHeld
   
   ; update sound/music here
   lda #0
@@ -446,6 +442,20 @@ skipNtsc:
   jsr system::prng
 
 end_nmi:
+  ldx 6
+:
+  dex 
+  cpx #$00 
+  beq @pad_end
+  ldy #0
+  jsr pad::read
+  sta temp
+  ldy #0
+  jsr pad::read
+  cmp temp
+  bne :-
+  sta keyHeld
+@pad_end:
   ; restore stack
   pla 
   tay   
@@ -939,7 +949,7 @@ init_state_title:
   lda #0
   jsr famistudio_music_play
 
-  jsr intro_cutscene
+  ; jsr intro_cutscene
 
   lda #$01
   sta title_irq
@@ -1006,6 +1016,19 @@ palette_obj_ruins:
   .byte $0F, $00, $10, $30
 .include "frisk/frisk.s"
 init_mainplay:
+  lda #%01000000
+  sta MAP_NT_A_CONTROL
+  sta MAP_NT_B_CONTROL
+  sta MAP_NT_C_CONTROL
+  sta MAP_NT_D_CONTROL
+  lda #$00
+  sta MAP_NT_A_BANK
+  lda #$01
+  sta MAP_NT_B_BANK
+  lda #$02
+  sta MAP_NT_C_BANK
+  lda #$03
+  sta MAP_NT_D_BANK
   lda #2
   sta PPU::palFadeDelay
   lda #2
