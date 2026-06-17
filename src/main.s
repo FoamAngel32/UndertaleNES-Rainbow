@@ -53,7 +53,7 @@
 .byte ((>NES_CHR_BANKS)<<4)|>NES_PRG_BANKS
 .byte $E0 ; PRG-RAM shift counter - (64 << shift counter)
 .if CHR_CHIPS <> RNBW_CHR_ROM
-  .byte 9 ; CHR-RAM shift counter - (64 << shift counter)
+  .byte 6 ; CHR-RAM shift counter - (64 << shift counter)
 .else
   .byte 0
 .endif
