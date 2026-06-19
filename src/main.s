@@ -75,6 +75,8 @@
 
 
 .zeropage
+ptr1:                  .res 2
+ptr2:                  .res 2
 state:                 .res 1
 current_chr_bank0:     .res 2
 current_chr_bank1:     .res 2
@@ -87,21 +89,38 @@ current_prg_bankC:     .res 2
 
 title_irq:             .res 1
 
-ptr1:                  .res 2
-ptr2:                  .res 2
 temp:                  .res 1
+irq_latch:             .res 1
+
+keyHeld:               .res 1
+frisk_health:   .res 1
+frisk_max_health:   .res 1
+frisk_x:        .res 2
+frisk_y:        .res 2
+frisk_flag0:    .res 1
+frisk_flag1:    .res 1
+; 7 BIT  1
+; 00000000
+; |||||||+-FRISK MOVE FAST HORZ
+; |||||++--FRAME
+; ||+++----FRAME DELAY
+; ++-------FACE
+; 7 BIT  1
+; 00000000
+; |||||||+-Played Animation
+; ||||||+--Movable (global.interact)
+; |+++++---Step Counter
+; +--------Menu loaded
+.segment "RAM"
+.define VRAM_BUFFER_SIZE 256
+vram_buffer:           .res 256
+buffer_used:           .res 1
 write_wait:                      .res 1
 write_used_byte:                 .res 1
 write_character:                 .res 1
 write_sfx:                       .res 1
-nt_data_len:           .res 1
-buffer_used:           .res 1
-vram_buffer:           .res 128
-irq_latch:             .res 1
-
 scroll_x:              .res 2
 scroll_y:              .res 2
-keyHeld:               .res 1
 /*
                                                                                   
 88                           88                        88                         
@@ -165,10 +184,10 @@ aa    ]8I    88,    88,    ,88  88            88,    "8a,   ,a88  88b,   ,a8"
 vector_reset:
 
   ; initialize the NES
-  cld
-  sei
-  ldx #$FF
-  txs
+  cld 
+  sei 
+  ldx #$FF 
+  txs 
 
 initPPU1:
   lda PPU_STATUS
@@ -267,6 +286,9 @@ config_game:
   sta MAP_PRG_E_LO
   lda #%00000011
   sta MAP_PRG_CONTROL
+
+  lda #$01
+  sta MAP_PRG_5_LO
 
   jsr PPU::getTVSystem
   cmp #0
@@ -738,7 +760,7 @@ aa    ]8I  88,    ,88
 ;[x] in, add how much
 ;[a] out, how much in total
 .proc add_health
-  lda #$0B
+  lda #$0C
   jsr famistudio_sfx_sample_play
   stx temp
   lda frisk_health
@@ -865,7 +887,37 @@ aa    ]8I  88,    ,88
   bne @loop    
   rts 
 .endproc
+; [X] in, item id
+; [Y] in, action
+action_item:
+  tya 
+  clc 
+  adc #41
+  tay 
+  sty MAP_PRG_8_LO
+  lda current_prg_bank8
+  pha 
+  sty current_prg_bank8
+  
+  txa 
+  asl 
+  tax 
+  
+  lda $8000, x
+  sta ptr1
+  lda $8001, x
+  sta ptr1+1
+  jmp (ptr1)
+return_to_action_item:
+  pla 
+  sta MAP_PRG_8_LO
+  sta current_prg_bank8
+  rts 
+
 main:
+  lda #20
+  sta frisk_health
+  sta frisk_max_health
   lda #39
   sta current_prg_bank8
   sta MAP_PRG_8_LO
@@ -909,7 +961,7 @@ main:
 
 clean_vram_buffer:
   ldx #$00    
-  ldy #$80        
+  ldy #VRAM_BUFFER_SIZE 
   lda #NT_UPD_EOF       
 @clear_loop:
   lda vram_buffer, x  
@@ -1059,6 +1111,13 @@ init_mainplay:
   lda #04
   jmp PPU::fadePaletteWait
 update_mainplay:
+  lda keyHeld
+  and #PAD_A
+  beq @donot_use
+  ldx #1
+  ldy #0
+  jsr action_item
+@donot_use:
   jsr update_frisk
   jmp draw_frisk
 .segment "BANK37"

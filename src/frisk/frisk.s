@@ -13,27 +13,6 @@ FRISK_FLAG0_FACE_RIGHT  = %11000000
 
 .segment "BANK35"
 .include "frisk/gfx.s"
-.zeropage
-frisk_health:   .res 1
-frisk_max_health:   .res 1
-frisk_x:        .res 2
-frisk_y:        .res 2
-frisk_flag0:    .res 1
-frisk_flag1:    .res 1
-; 7 BIT  1
-; 00000000
-; |||||||+-FRISK MOVE FAST HORZ
-; |||||++--FRAME
-; ||+++----FRAME DELAY
-; ++-------FACE
-; 7 BIT  1
-; 00000000
-; |||||||+-Played Animation
-; ||||||+--Movable (global.interact)
-; |+++++---Step Counter
-; +--------Menu loaded
-.segment "BANK35"
-
 draw_frisk:
   lda frisk_flag0
   and #FRISK_FLAG0_FRAME 
@@ -175,7 +154,7 @@ update_frisk:
   sta MAP_WINDOW_Y_SCROLL
   lda #0
   sta MAP_BG_EXT_BANK
-  lda #%0001001
+  lda #%00001001
   sta MAP_NT_W_CONTROL
   jsr PPU::waitNMI
 
