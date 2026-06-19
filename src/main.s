@@ -926,7 +926,6 @@ main:
   sta current_prg_bank8
   sta MAP_PRG_8_LO
 @main_loop:
-  jsr PPU::oam_clear
   ; detect state 0
   lda state
   bne @end_state_title
@@ -1083,8 +1082,8 @@ init_mainplay:
   sta MAP_NT_D_BANK
   lda #2
   sta PPU::palFadeDelay
-  lda #2
-  jsr famistudio_music_play
+  ; lda #2
+  ; jsr famistudio_music_play
   lda #00
   jsr PPU::fadePaletteWait
   lda #$02

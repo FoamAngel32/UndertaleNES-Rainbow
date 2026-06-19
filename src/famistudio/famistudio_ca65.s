@@ -6750,6 +6750,13 @@ famistudio_sfx_play:
 
     @effect_data_ptr = famistudio_ptr0
 
+    pha 
+    lda #0
+    sta MAP_PRG_8_LO               ; Foam added this
+    lda #1
+    sta MAP_PRG_A_LO
+    pla 
+
     asl a
     tay
 
@@ -6765,6 +6772,11 @@ famistudio_sfx_play:
     iny
     lda (@effect_data_ptr),y
     sta famistudio_sfx_ptr_hi,x ; This write enables the effect
+
+    lda current_prg_bank8
+    sta MAP_PRG_8_LO            ; Foam Added this
+    lda current_prg_bankA
+    sta MAP_PRG_A_LO
 
     rts
 

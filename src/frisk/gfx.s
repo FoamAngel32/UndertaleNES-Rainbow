@@ -46,6 +46,7 @@ frisk_right0_data:
 	.byte  10, 16,$1d,0
 
 	.byte  18,  0,$19,0
+	.byte  0,  0,$23,0
 	.byte $80
 
 
@@ -58,6 +59,7 @@ frisk_right1_data:
 	.byte  10, 17,$21,0
 
 	.byte  18,  1,$19,0
+	.byte  0,  0,$23,0
 	.byte $80
 
 
@@ -109,6 +111,7 @@ frisk_left0_data:
 	.byte   2, 16,$1d,0|OAM_FLIP_H
 
 	.byte - 6,  0,$19,0|OAM_FLIP_H
+	.byte  0,  0,$23,0
 	.byte $80
 
 
@@ -121,6 +124,7 @@ frisk_left1_data:
 	.byte   2, 17,$21,0|OAM_FLIP_H
 
 	.byte - 6,  1,$19,0|OAM_FLIP_H
+	.byte  0,  0,$23,0
 	.byte $80
 
 
